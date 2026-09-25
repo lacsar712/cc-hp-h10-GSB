@@ -11,7 +11,6 @@ from pydantic import BaseModel, Field
 from psycopg.rows import dict_row
 
 from rules import judge
-from hide_new import sort_boundary, show_pending, pending_sync_message
 
 SECRET = os.environ.get("JWT_SECRET", "herb-process-dev-secret")
 DSN = os.environ.get("DATABASE_URL", "postgresql://app:app@localhost:54393/herb")
@@ -114,10 +113,7 @@ def login(body: LoginIn):
 def list_batches(_user: dict = Depends(current_user)):
     with connect() as conn:
         rows = conn.execute("SELECT id, herb, doc, verdict, reason, created_by FROM batches ORDER BY id DESC").fetchall()
-    data = sort_boundary(rows)
-    if show_pending():
-        return {"rows": data, "hint": pending_sync_message()}
-    return {"rows": data, "hint": ""}
+    return {"rows": rows, "hint": ""}
 
 
 @app.post("/api/batches", status_code=201)
