@@ -8,7 +8,6 @@
   let tempC = 110
   let minutes = 10
   let error = ''
-  let syncHint = ''
 
   async function api(path, options = {}) {
     const res = await fetch(path, {
@@ -38,7 +37,6 @@
   async function load() {
     const data = await api('/api/batches')
     rows = data.rows || data
-    syncHint = data.hint || ''
   }
 
   async function save() {
@@ -85,10 +83,9 @@
       <button on:click={save}>写入清炒记录</button>
       {#if error}<p>{error}</p>{/if}
     {/if}
-    {#if syncHint}<p>{syncHint}</p>{/if}
     <ul>
       {#each rows as row}
-        <li>{row.herb} · {row.verdict} · {row.reason} · 温度 {row.doc.steps[0].temp_c}</li>
+        <li>#{row.id} {row.herb} · {row.verdict} · {row.reason} · 温度 {row.doc.steps[0].temp_c}</li>
       {/each}
     </ul>
   {/if}
